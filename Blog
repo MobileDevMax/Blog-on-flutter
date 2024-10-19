@@ -1,0 +1,96 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Blog',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: BlogPage(),
+    );
+  }
+}
+
+class BlogPage extends StatefulWidget {
+  @override
+  _BlogPageState createState() => _BlogPageState();
+}
+
+class _BlogPageState extends State<BlogPage> {
+  int _selectedIndex = 0;
+  final List<String> _articles = [];
+  final TextEditingController _controller = TextEditingController();
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void _addArticle() {
+    if (_controller.text.isNotEmpty) {
+      setState(() {
+        _articles.add(_controller.text);
+        _controller.clear();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Blog'),
+      ),
+      body: _selectedIndex == 0
+          ? Center(child: Text('About me'))
+          : _selectedIndex == 1
+              ? Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _controller,
+                        decoration: InputDecoration(labelText: 'Write an article'),
+                      ),
+                      SizedBox(height: 8.0),
+                      ElevatedButton(
+                        onPressed: _addArticle,
+                        child: Text('Save'),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _articles.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              margin: EdgeInsets.symmetric(vertical: 8.0),
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Text(_articles[index]),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Center(child: Text('Contacts')),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'About me'),
+          BottomNavigationBarItem(icon: Icon(Icons.article), label: 'Articles'),
+          BottomNavigationBarItem(icon: Icon(Icons.contact_mail), label: 'Contacts'),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+}
